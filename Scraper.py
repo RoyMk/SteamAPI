@@ -36,9 +36,6 @@ def scrape_games(
     Raises:
         ValueError: If `export_data` is True but `export_location` is None.
 
-    Example:
-        >>> games = scrape_games(pages=2, export_data=True, export_location="C:/data/steam_stats")
-        >>> pprint(games)
     """
     if export_data and not export_location:
         raise ValueError("export_location must be specified if export_data is True.")
@@ -70,9 +67,11 @@ def scrape_games(
 
     if export_data:
         # Ensure export_location is a Path object and add .csv extension if missing
-        export_path = Path(export_location)
-        if export_path.suffix != ".csv":
-            export_path = export_path.with_suffix(".csv")
+        # Convert to Path object and force .csv extension
+        export_path = Path(export_location).with_suffix('.csv')
+
+        # Create parent directories if missing
+        export_path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(export_path, 'w', newline='', encoding="utf-8") as csvfile:
             fieldnames = ['name', 'current_players', 'peak_players']
@@ -86,4 +85,4 @@ def scrape_games(
 
 
 if __name__ == "__main__":
-    pprint(scrape_games(pages=5))
+    pprint(scrape_games())
